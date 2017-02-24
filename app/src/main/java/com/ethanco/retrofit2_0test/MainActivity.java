@@ -5,11 +5,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import retrofit.Callback;
-import retrofit.GsonConverterFactory;
-import retrofit.Response;
-import retrofit.Retrofit;
-import retrofit.RxJavaCallAdapterFactory;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         APIService service = retrofit.create(APIService.class);
         service.loadeather("杭州", apiKey).enqueue(new Callback<Weather>() {
             @Override
-            public void onResponse(Response<Weather> response, Retrofit retrofit) {
+            public void onResponse(Call<Weather> call, Response<Weather> response) {
                 if (response.body() != null) {
                     Weather weather = response.body();
                     Weather.ResultEntity.TodayEntity todayEntiry = weather.getResult().getToday();
@@ -86,9 +87,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<Weather> call, Throwable t) {
                 Log.e("zhk-MainActivity", "onFailure: ", t);
             }
+
+
         });
     }
 }

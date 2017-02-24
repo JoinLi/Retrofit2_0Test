@@ -8,9 +8,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
-import retrofit.RxJavaCallAdapterFactory;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -24,7 +25,8 @@ public class MainActivity1 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getByRxJava();
+//        getByRxJava();
+        getByRxJavas();
     }
 
     private void getByRxJava() {
@@ -35,7 +37,7 @@ public class MainActivity1 extends AppCompatActivity {
 
         APIService service = retrofit.create(APIService.class);
         Observable<CreditBean> creditGr = service.getCreditGr();
-        Observable<CreditBean> creditQy = service.getCreditQy("xypjqy","李");
+        Observable<CreditBean> creditQy = service.getCreditQy("xypjqy", "李");
         Observable.merge(creditGr, creditQy)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<CreditBean>() {
@@ -59,7 +61,7 @@ public class MainActivity1 extends AppCompatActivity {
 
                     @Override
                     public void onNext(CreditBean creditBean) {
-                        for (int i = 0; i <creditBean.getMydata().size() ; i++) {
+                        for (int i = 0; i < creditBean.getMydata().size(); i++) {
                             String credit = creditBean.getMydata().get(i).getUser_cname();
                             Log.i("zhk-MainActivity", credit);
                             list.add(credit);
@@ -79,5 +81,31 @@ public class MainActivity1 extends AppCompatActivity {
                 });
     }
 
+    private void getByRxJavas() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://3g.gljlw.com/music/qq/")
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+        APIService service = retrofit.create(APIService.class);
+        Observable<String> observable = service.getCtring();
+        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        System.err.println("" + e);
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        System.err.println("" + s);
+                    }
+                });
+    }
 
 }

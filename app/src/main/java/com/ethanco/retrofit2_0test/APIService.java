@@ -1,9 +1,7 @@
 package com.ethanco.retrofit2_0test;
-
-import retrofit.Call;
-import retrofit.http.GET;
-import retrofit.http.Path;
-import retrofit.http.Query;
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
 import rx.Observable;
 
 /**
@@ -27,4 +25,7 @@ public interface APIService {
 
     @GET("getAPI.aspx?ac=xypjgr&keywords=")
     Observable<CreditBean> getCreditGr();
+
+    @GET("search.php?keywords=张杰&page=1")
+    Observable<String> getCtring();
 }
